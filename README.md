@@ -4,6 +4,7 @@
 
 不改动游戏文件，在游戏运行时对"伤害落地"指令挂钩，把玩家打出的伤害按可调倍率还原回去。
 
+[![CI](https://github.com/ArcherVan/kof2002um-bossfix/actions/workflows/ci.yml/badge.svg)](https://github.com/ArcherVan/kof2002um-bossfix/actions/workflows/ci.yml)
 ![platform](https://img.shields.io/badge/platform-Windows%2064--bit-lightgrey)
 ![python](https://img.shields.io/badge/python-3.8%2B-blue)
 ![deps](https://img.shields.io/badge/dependencies-stdlib%20only-brightgreen)
