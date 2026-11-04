@@ -13,6 +13,24 @@ import json
 import os
 import sys
 
+
+def _force_utf8_console():
+    """把标准输出/错误切成 UTF-8。
+
+    英文版 Windows 的默认代码页是 cp1252，直接 print 中文会抛
+    UnicodeEncodeError 并中断程序；CI 里输出被重定向到管道时同理。
+    控制台输出走 WriteConsoleW，不受代码页影响；管道/重定向则按 UTF-8 写出。
+    """
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            if stream is not None and hasattr(stream, 'reconfigure'):
+                stream.reconfigure(encoding='utf-8', errors='replace')
+        except Exception:
+            pass
+
+
+_force_utf8_console()
+
 # 内置默认值（与 Steam 版 KingOfFighters2002UM.exe 对应）
 DEFAULTS = {
     # 进程名：大小写不敏感，按 tasklist 输出匹配

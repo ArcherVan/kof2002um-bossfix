@@ -5,6 +5,18 @@
 
 ---
 
+## [1.0.1] - 2026-11-04
+
+### 修复
+
+- **非中文 Windows 上启动即崩溃**：英文版 Windows 控制台代码页为 cp1252，无法编码中文输出，
+  `print` 会抛 `UnicodeEncodeError` 并中断程序（CI 的 English runner 首先暴露了这一点）。
+  现在导入 `src/profile.py` 时强制把标准输出/错误切为 UTF-8，覆盖 `kof.cmd`、
+  `hookdmg.py`、`env_check.py`、`rec.py` 全部入口。
+- CI 增加 `PYTHONUTF8=1` / `PYTHONIOENCODING=utf-8`，避免回归。
+
+---
+
 ## [1.0.0] - 2026-11-04
 
 首个公开版本。

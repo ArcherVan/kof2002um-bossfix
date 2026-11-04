@@ -58,6 +58,29 @@ class TestCave(unittest.TestCase):
         self.assertEqual(H.BACK, H.SITE + H.SITE_LEN)
 
 
+class TestConsoleEncoding(unittest.TestCase):
+    """英文版 Windows（cp1252）下 print 中文不应崩溃。"""
+
+    def test_stdout_forced_to_utf8(self):
+        import io
+        import importlib
+
+        buf = io.BytesIO()
+        fake = io.TextIOWrapper(buf, encoding='cp1252', errors='strict')
+        old = sys.stdout
+        sys.stdout = fake
+        try:
+            importlib.reload(cfg)          # 导入时会把 stdout 重配成 UTF-8
+            self.assertEqual(fake.encoding.lower().replace('-', ''), 'utf8')
+            print('中文输出测试')           # 修复前这里会抛 UnicodeEncodeError
+            fake.flush()
+        finally:
+            sys.stdout = old
+            importlib.reload(cfg)
+
+        self.assertIn('中文输出测试'.encode('utf-8'), buf.getvalue())
+
+
 class TestNoHardcodedPaths(unittest.TestCase):
 
     def test_sources_have_no_abs_paths(self):

@@ -10,6 +10,10 @@ jobs:
   check:
     name: 语法 / 测试 / 编码
     runs-on: windows-latest
+    env:
+      # 英文版 runner 默认代码页 cp1252，无法编码中文输出
+      PYTHONUTF8: '1'
+      PYTHONIOENCODING: 'utf-8'
     strategy:
       fail-fast: false
       matrix:

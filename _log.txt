@@ -1,0 +1,187 @@
+﻿2026-11-04T10:38:01.2913593Z Current runner version: '2.338.2'
+2026-11-04T10:38:01.2931265Z ##[group]Runner Image Provisioner
+2026-11-04T10:38:01.2931778Z Hosted Compute Agent
+2026-11-04T10:38:01.2932158Z Version: 20261021.618
+2026-11-04T10:38:01.2932487Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-04T10:38:01.2932889Z Build Date: 2026-10-21T00:45:21Z
+2026-11-04T10:38:01.2933263Z Worker ID: {fee3585f-5905-4d70-8b27-93a2cee8d7e2}
+2026-11-04T10:38:01.2933636Z Region: westus3
+2026-11-04T10:38:01.2933930Z Cloud: Azure
+2026-11-04T10:38:01.2934236Z ##[endgroup]
+2026-11-04T10:38:01.2934942Z ##[group]Operating System
+2026-11-04T10:38:01.2935273Z Microsoft Windows Server 2025
+2026-11-04T10:38:01.2935608Z 10.0.26100
+2026-11-04T10:38:01.2935935Z Datacenter
+2026-11-04T10:38:01.2936254Z ##[endgroup]
+2026-11-04T10:38:01.2936543Z ##[group]Runner Image
+2026-11-04T10:38:01.2936880Z Image: windows-2025-vs2026
+2026-11-04T10:38:01.2937194Z Version: 20261030.294.1
+2026-11-04T10:38:01.2938108Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261030.294/images/windows/Windows2025-VS2026-Readme.md
+2026-11-04T10:38:01.2938974Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261030.294
+2026-11-04T10:38:01.2939498Z ##[endgroup]
+2026-11-04T10:38:01.2940196Z ##[group]GITHUB_TOKEN Permissions
+2026-11-04T10:38:01.2941300Z Contents: read
+2026-11-04T10:38:01.2941593Z Metadata: read
+2026-11-04T10:38:01.2941905Z Packages: read
+2026-11-04T10:38:01.2942203Z ##[endgroup]
+2026-11-04T10:38:01.2943457Z Secret source: Actions
+2026-11-04T10:38:01.2943967Z Cache mode: write
+2026-11-04T10:38:01.2944341Z Prepare workflow directory
+2026-11-04T10:38:01.4080058Z Prepare all required actions
+2026-11-04T10:38:01.4125920Z Getting action download info
+2026-11-04T10:38:01.6713505Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-04T10:38:01.7511455Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-11-04T10:38:01.9539542Z Complete job name: 语法 / 测试 / 编码 (3.12)
+2026-11-04T10:38:02.1558999Z ##[group]Run actions/checkout@v4
+2026-11-04T10:38:02.1559681Z with:
+2026-11-04T10:38:02.1559917Z   repository: ArcherVan/kof2002um-bossfix
+2026-11-04T10:38:02.1562002Z   token: ***
+2026-11-04T10:38:02.1562218Z   ssh-strict: true
+2026-11-04T10:38:02.1562440Z   ssh-user: git
+2026-11-04T10:38:02.1562665Z   persist-credentials: true
+2026-11-04T10:38:02.1562911Z   clean: true
+2026-11-04T10:38:02.1563141Z   sparse-checkout-cone-mode: true
+2026-11-04T10:38:02.1563404Z   fetch-depth: 1
+2026-11-04T10:38:02.1563621Z   fetch-tags: false
+2026-11-04T10:38:02.1563845Z   show-progress: true
+2026-11-04T10:38:02.1564070Z   lfs: false
+2026-11-04T10:38:02.1564275Z   submodules: false
+2026-11-04T10:38:02.1564501Z   set-safe-directory: true
+2026-11-04T10:38:02.1564760Z   allow-unsafe-pr-checkout: false
+2026-11-04T10:38:02.1565110Z ##[endgroup]
+2026-11-04T10:38:02.2527696Z Syncing repository: ArcherVan/kof2002um-bossfix
+2026-11-04T10:38:02.2528801Z ##[group]Getting Git version info
+2026-11-04T10:38:02.2529200Z Working directory is 'D:\a\kof2002um-bossfix\kof2002um-bossfix'
+2026-11-04T10:38:02.3171816Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-04T10:38:02.6957047Z git version 2.56.0.windows.4
+2026-11-04T10:38:02.6994060Z ##[endgroup]
+2026-11-04T10:38:02.7007972Z Temporarily overriding HOME='D:\a\_temp\5e8ad2c0-19df-4673-8889-c7666b0ed68b' before making global git config changes
+2026-11-04T10:38:02.7008689Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T10:38:02.7015159Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\kof2002um-bossfix\kof2002um-bossfix
+2026-11-04T10:38:02.7549972Z Deleting the contents of 'D:\a\kof2002um-bossfix\kof2002um-bossfix'
+2026-11-04T10:38:02.7553818Z ##[group]Initializing the repository
+2026-11-04T10:38:02.7559792Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\kof2002um-bossfix\kof2002um-bossfix
+2026-11-04T10:38:02.8449549Z Initialized empty Git repository in D:/a/kof2002um-bossfix/kof2002um-bossfix/.git/
+2026-11-04T10:38:02.8487741Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/ArcherVan/kof2002um-bossfix
+2026-11-04T10:38:02.9089412Z ##[endgroup]
+2026-11-04T10:38:02.9089939Z ##[group]Disabling automatic garbage collection
+2026-11-04T10:38:02.9097953Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-11-04T10:38:02.9403628Z ##[endgroup]
+2026-11-04T10:38:02.9404504Z ##[group]Setting up auth
+2026-11-04T10:38:02.9410876Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T10:38:02.9663814Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-04T10:38:04.4384680Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T10:38:04.4631206Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-04T10:38:04.8526139Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T10:38:04.8772059Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-04T10:38:05.2698518Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-11-04T10:38:05.2950654Z ##[endgroup]
+2026-11-04T10:38:05.2958279Z ##[group]Fetching the repository
+2026-11-04T10:38:05.2960357Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +fdeba5ca2bffa5d0ccc34fae6854c3c5e7379d9e:refs/remotes/origin/main
+2026-11-04T10:38:06.5548026Z From https://github.com/ArcherVan/kof2002um-bossfix
+2026-11-04T10:38:06.5548642Z  * [new ref]         fdeba5ca2bffa5d0ccc34fae6854c3c5e7379d9e -> origin/main
+2026-11-04T10:38:06.5577913Z ##[endgroup]
+2026-11-04T10:38:06.5578352Z ##[group]Determining the checkout info
+2026-11-04T10:38:06.5578941Z ##[endgroup]
+2026-11-04T10:38:06.5586491Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-11-04T10:38:06.6037686Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-11-04T10:38:06.6277563Z ##[group]Checking out the ref
+2026-11-04T10:38:06.6283245Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B main refs/remotes/origin/main
+2026-11-04T10:38:06.6825429Z Switched to a new branch 'main'
+2026-11-04T10:38:06.6839029Z branch 'main' set up to track 'origin/main'.
+2026-11-04T10:38:06.6872616Z ##[endgroup]
+2026-11-04T10:38:06.7224957Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-11-04T10:38:06.7449428Z fdeba5ca2bffa5d0ccc34fae6854c3c5e7379d9e
+2026-11-04T10:38:06.8174515Z ##[group]Run actions/setup-python@v5
+2026-11-04T10:38:06.8174811Z with:
+2026-11-04T10:38:06.8174925Z   python-version: 3.12
+2026-11-04T10:38:06.8175046Z   check-latest: false
+2026-11-04T10:38:06.8176365Z   token: ***
+2026-11-04T10:38:06.8176480Z   update-environment: true
+2026-11-04T10:38:06.8176611Z   allow-prereleases: false
+2026-11-04T10:38:06.8176739Z   freethreaded: false
+2026-11-04T10:38:06.8176853Z ##[endgroup]
+2026-11-04T10:38:06.9199734Z ##[group]Installed versions
+2026-11-04T10:38:06.9405016Z (node:6384) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-04T10:38:06.9405441Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-04T10:38:06.9406836Z Successfully set up CPython (3.12.10)
+2026-11-04T10:38:06.9407365Z ##[endgroup]
+2026-11-04T10:38:06.9722232Z ##[group]Run $files = @(
+2026-11-04T10:38:06.9722484Z [36;1m$files = @([0m
+2026-11-04T10:38:06.9722654Z [36;1m  'src/hookdmg.py', 'src/kofp.py', 'src/rec.py',[0m
+2026-11-04T10:38:06.9722859Z [36;1m  'src/profile.py', 'tools/env_check.py',[0m
+2026-11-04T10:38:06.9723029Z [36;1m  'tests/test_offline.py'[0m
+2026-11-04T10:38:06.9723164Z [36;1m)[0m
+2026-11-04T10:38:06.9723281Z [36;1mforeach ($f in $files) {[0m
+2026-11-04T10:38:06.9723427Z [36;1m  python -m py_compile $f[0m
+2026-11-04T10:38:06.9723588Z [36;1m  if ($LASTEXITCODE -ne 0) { exit 1 }[0m
+2026-11-04T10:38:06.9723735Z [36;1m}[0m
+2026-11-04T10:38:07.0472075Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-04T10:38:07.0472285Z env:
+2026-11-04T10:38:07.0472446Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:07.0472715Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-04T10:38:07.0473013Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:07.0473239Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:07.0473459Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:07.0473638Z ##[endgroup]
+2026-11-04T10:38:08.6591190Z ##[group]Run python -m unittest discover -s tests -v
+2026-11-04T10:38:08.6591484Z [36;1mpython -m unittest discover -s tests -v[0m
+2026-11-04T10:38:08.6641778Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-04T10:38:08.6641993Z env:
+2026-11-04T10:38:08.6642152Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:08.6642407Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-04T10:38:08.6642656Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:08.6642892Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:08.6643106Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:08.6643281Z ##[endgroup]
+2026-11-04T10:38:09.0922028Z test_contains_original_instruction (test_offline.TestCave.test_contains_original_instruction) ... ok
+2026-11-04T10:38:09.0922846Z test_header (test_offline.TestCave.test_header) ... ok
+2026-11-04T10:38:09.0923266Z test_jump_back_target (test_offline.TestCave.test_jump_back_target) ... ok
+2026-11-04T10:38:09.0923760Z test_site_and_orig_consistent (test_offline.TestCave.test_site_and_orig_consistent) ... ok
+2026-11-04T10:38:09.0924183Z test_addresses_are_ints (test_offline.TestConfig.test_addresses_are_ints) ... ok
+2026-11-04T10:38:09.0924451Z test_defaults (test_offline.TestConfig.test_defaults) ... ok
+2026-11-04T10:38:09.0924794Z test_log_path_inside_repo (test_offline.TestConfig.test_log_path_inside_repo) ... ok
+2026-11-04T10:38:09.1076970Z test_sources_have_no_abs_paths (test_offline.TestNoHardcodedPaths.test_sources_have_no_abs_paths) ... ok
+2026-11-04T10:38:09.1077420Z 
+2026-11-04T10:38:09.1077588Z ----------------------------------------------------------------------
+2026-11-04T10:38:09.1078033Z Ran 8 tests in 0.016s
+2026-11-04T10:38:09.1078182Z 
+2026-11-04T10:38:09.1078245Z OK
+2026-11-04T10:38:09.1976493Z ##[group]Run python src/hookdmg.py config
+2026-11-04T10:38:09.1976748Z [36;1mpython src/hookdmg.py config[0m
+2026-11-04T10:38:09.2024070Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-04T10:38:09.2024282Z env:
+2026-11-04T10:38:09.2024444Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:09.2024709Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.10\x64/lib/pkgconfig
+2026-11-04T10:38:09.2024999Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:09.2025238Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:09.2025466Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.10\x64
+2026-11-04T10:38:09.2025843Z ##[endgroup]
+2026-11-04T10:38:09.3987212Z Traceback (most recent call last):
+2026-11-04T10:38:09.3992179Z   File "D:\a\kof2002um-bossfix\kof2002um-bossfix\src\hookdmg.py", line 422, in <module>
+2026-11-04T10:38:09.3992531Z     main()
+2026-11-04T10:38:09.4091495Z   File "D:\a\kof2002um-bossfix\kof2002um-bossfix\src\hookdmg.py", line 392, in main
+2026-11-04T10:38:09.4093183Z     print_config()
+2026-11-04T10:38:09.4093643Z   File "D:\a\kof2002um-bossfix\kof2002um-bossfix\src\hookdmg.py", line 379, in print_config
+2026-11-04T10:38:09.4096827Z     print('\u914d\u7f6e\u6765\u6e90\uff1a%s' % cfg.CONFIG_SOURCE)
+2026-11-04T10:38:09.4097224Z   File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\encodings\cp1252.py", line 19, in encode
+2026-11-04T10:38:09.4146541Z     return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+2026-11-04T10:38:09.4147060Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T10:38:09.4147407Z UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-4: character maps to <undefined>
+2026-11-04T10:38:09.4839642Z ##[error]Process completed with exit code 1.
+2026-11-04T10:38:09.5284204Z Post job cleanup.
+2026-11-04T10:38:09.6307330Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-04T10:38:09.6598330Z git version 2.56.0.windows.4
+2026-11-04T10:38:09.6655661Z Temporarily overriding HOME='D:\a\_temp\9ba0164e-172f-4d8b-9543-f4d02aab50dc' before making global git config changes
+2026-11-04T10:38:09.6656314Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T10:38:09.6663144Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\kof2002um-bossfix\kof2002um-bossfix
+2026-11-04T10:38:09.6939173Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T10:38:09.7215626Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-04T10:38:10.1135131Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T10:38:10.1421832Z http.https://github.com/.extraheader
+2026-11-04T10:38:10.1459279Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-11-04T10:38:10.1725048Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-04T10:38:10.5864415Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T10:38:10.6116023Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-04T10:38:11.0041420Z Cleaning up orphan processes
+2026-11-04T10:38:11.0128787Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
