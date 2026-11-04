@@ -264,7 +264,7 @@ kof2002um-bossfix/
 1. **获取代码**
 
    ```bat
-   git clone https://github.com/<your-name>/kof2002um-bossfix.git
+   git clone https://github.com/ArcherVan/kof2002um-bossfix.git
    cd kof2002um-bossfix
    ```
 
