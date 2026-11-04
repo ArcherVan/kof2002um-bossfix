@@ -127,7 +127,20 @@ test: 增加 cave 跳回地址的断言
 
 ---
 
-## 9. 行为准则
+## 9. 推送故障排查
+
+如果你维护 fork 时推送遇到下面两种报错，都不是代码问题：
+
+| 报错 | 原因 | 处理 |
+|---|---|---|
+| `remote: Repository not found` | 远端仓库还没创建（GitHub 对"不存在"和"无权限"一律返回这句），或凭据不是该仓库所有者 | 先在网页上建空仓库（不要勾选自动生成 README/LICENSE），再 `git remote set-url` 核对地址与账号 |
+| `remote: Internal Server Error` + `! [remote rejected]` | GitHub 侧 `receive-pack` 偶发 500，与 HTTP/2 有关 | 直接重试；连续失败时改用 `git -c http.version=HTTP/1.1 push` |
+
+第二种情况重试一次基本都能过，不要以为是本地仓库坏了而去 `git reset`。
+
+---
+
+## 10. 行为准则
 
 - 对事不对人，技术分歧用数据说话；
 - 不讨论、不协助联机作弊或绕过反作弊；
