@@ -1,0 +1,27 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyd
+.venv/
+venv/
+.tox/
+.pytest_cache/
+*.egg-info/
+
+# ---- 本地配置与运行产物（不入库） ----
+config.json
+hookdmg_log.txt
+*.log
+doctor.txt
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# ---- 构建 ----
+build/
+dist/

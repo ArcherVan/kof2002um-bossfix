@@ -1,0 +1,13 @@
+{
+  "_comment": "复制本文件为 config.json 后按需修改；不创建 config.json 时使用内置默认值（Steam 版）。地址可写 0x 开头的十六进制或十进制整数。",
+  "process_name": "KingOfFighters2002UM.exe",
+  "hook_site": "0x620902",
+  "hook_orig": "66 29 90 38 01 00 00",
+  "hook_back": "0x620909",
+  "obj_slot": "0x21E3414",
+  "player_obj": "0x167D360",
+  "enemy_obj": "0x167D580",
+  "hp_offset": "0x138",
+  "default_factor": 2.0,
+  "log_file": "hookdmg_log.txt"
+}

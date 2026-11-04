@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: 语法 / 测试 / 编码
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.12']
+
+    steps:
+      - name: 检出
+        uses: actions/checkout@v4
+
+      - name: 配置 Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: 语法检查
+        shell: pwsh
+        run: |
+          $files = @(
+            'src/hookdmg.py', 'src/kofp.py', 'src/rec.py',
+            'src/profile.py', 'tools/env_check.py',
+            'tests/test_offline.py'
+          )
+          foreach ($f in $files) {
+            python -m py_compile $f
+            if ($LASTEXITCODE -ne 0) { exit 1 }
+          }
+
+      - name: 离线测试
+        run: python -m unittest discover -s tests -v
+
+      - name: 配置加载
+        run: python src/hookdmg.py config
+
+      - name: 校验 config.example.json 可解析
+        run: python -c "import json; json.load(open('config.example.json', encoding='utf-8')); print('json ok')"
+
+      - name: 校验 kof.cmd 为 GBK 编码
+        run: python -c "open('kof.cmd', encoding='gbk').read(); print('gbk ok')"

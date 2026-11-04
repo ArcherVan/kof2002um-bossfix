@@ -1,0 +1,13 @@
+# -*- coding: utf-8 -*-
+# 行尾统一以 CRLF 检出，避免 Windows 批处理在部分工具链下失效
+* text=auto
+
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.py  text eol=lf
+*.md  text eol=lf
+*.json text eol=lf
+
+# kof.cmd 以 GBK(CP936) 保存：中文 Windows 的 cmd.exe 按系统代码页解析批处理。
+# 设为 binary 可阻止 git 做编码/换行转换，避免中文提示被破坏。
+kof.cmd binary

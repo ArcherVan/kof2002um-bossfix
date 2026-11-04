@@ -1,0 +1,12 @@
+# 本项目运行时零第三方依赖。
+#
+# 全部功能仅使用 Python 标准库：
+#   ctypes / struct / os / sys / json / subprocess / time / unittest
+#
+# 因此本文件故意留空，`pip install -r requirements.txt` 不会安装任何东西。
+# 请不要为了"保险"额外安装包——工具只依赖 CPython 自带的 ctypes。
+#
+# 若你想运行早期分析脚本（不在本仓库运行路径内），可选安装：
+#   capstone   反汇编核验
+#   pillow     截图对比
+#   numpy      内存扫描加速
