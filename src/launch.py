@@ -430,8 +430,12 @@ def handle(h, act, val, ui):
             ui.say('伤害钩子还没装，先装上（几十毫秒）…')
             hookdmg.install(h)
         _, cur = hookdmg.comp_state(h)
-        f = shell.clamp(val if val is not None
-                        else (cur if cur else cfg.DEFAULT_FACTOR))
+        if val is not None:
+            f = shell.clamp(val)
+        elif cur and cur != 1.0:        # 之前设过，沿用
+            f = shell.clamp(cur)
+        else:                           # 刚装好（cave 里是 1.0），用默认倍率
+            f = shell.clamp(cfg.DEFAULT_FACTOR)
         ui.say(*capture(hookdmg.set_comp, h, True, f))
         if f >= 4.0:
             ui.say('  提示：%g 倍已属一击必杀级别，嫌太狠就输入 2 调回来。' % f)
