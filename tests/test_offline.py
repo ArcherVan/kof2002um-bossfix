@@ -243,6 +243,70 @@ class TestGameLauncher(unittest.TestCase):
         self.assertIn('start "" "%EXE%"', text)
 
 
+class TestShell(unittest.TestCase):
+    """窗口内命令解析（src/shell.py）"""
+
+    def setUp(self):
+        import shell
+        self.sh = shell
+
+    def test_bare_number(self):
+        self.assertEqual(self.sh.parse('2.5'), ('on', 2.5))
+        self.assertEqual(self.sh.parse('3'), ('on', 3.0))
+        self.assertEqual(self.sh.parse('  1.75  '), ('on', 1.75))
+
+    def test_number_variants(self):
+        self.assertEqual(self.sh.parse('x3'), ('on', 3.0))
+        self.assertEqual(self.sh.parse('2.5x'), ('on', 2.5))
+        self.assertEqual(self.sh.parse('dmg 1.5'), ('on', 1.5))
+        self.assertEqual(self.sh.parse('10倍'), ('on', 10.0))
+
+    def test_commands(self):
+        self.assertEqual(self.sh.parse('on'), ('on', None))
+        self.assertEqual(self.sh.parse('ON 4'), ('on', 4.0))
+        self.assertEqual(self.sh.parse('off'), ('off', None))
+        self.assertEqual(self.sh.parse('power'), ('power', None))
+        self.assertEqual(self.sh.parse('status'), ('status', None))
+        self.assertEqual(self.sh.parse('quit'), ('quit', None))
+        self.assertEqual(self.sh.parse('Q'), ('quit', None))
+
+    def test_unknown_falls_back_to_help(self):
+        self.assertEqual(self.sh.parse(''), ('help', None))
+        self.assertEqual(self.sh.parse('???'), ('help', None))
+        self.assertEqual(self.sh.parse('abc'), ('help', None))
+
+    def test_clamp(self):
+        self.assertEqual(self.sh.clamp(0.001), self.sh.MIN_FACTOR)
+        self.assertEqual(self.sh.clamp(999), self.sh.MAX_FACTOR)
+        self.assertEqual(self.sh.clamp(2.5), 2.5)
+
+    def test_help_is_gbk_safe(self):
+        # 启动文件与 kof.cmd 都是 GBK，帮助文本不能有编码外的字符
+        for line in self.sh.HELP:
+            line.encode('gbk')
+
+    def test_prompt_say_keeps_prompt_last(self):
+        import io
+        from contextlib import redirect_stdout
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            p = self.sh.Prompt()
+            p.say('hello')
+            p.say('a', 'b')
+        text = buf.getvalue()
+        self.assertTrue(text.endswith('kof> '))
+        self.assertIn('hello', text)
+        self.assertIn('a\nb\n', text)
+
+    def test_plain_matches_print(self):
+        import io
+        from contextlib import redirect_stdout
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            self.sh.Plain().say('x', 'y')
+        self.assertEqual(buf.getvalue(), 'x\ny\n')
+
+
 class TestNoHardcodedPaths(unittest.TestCase):
 
     def test_sources_have_no_abs_paths(self):

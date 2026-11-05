@@ -330,15 +330,24 @@ def set_comp(h, on, factor=None):
     show_comp(h, st)
 
 
+def comp_state(h, st=None):
+    """返回 (是否开启, 倍率)；钩子未安装时返回 (False, None)"""
+    if st is None:
+        st = find_cave(h)
+    if not st or isinstance(st, str):
+        return False, None
+    on, fac = struct.unpack('<II', rd(h, st['cave'] + OFF_FLAG, 8))
+    return bool(on), fac / 256.0
+
+
 def show_comp(h, st=None):
     if st is None:
         st = find_cave(h)
         if not st or isinstance(st, str):
             raise SystemExit('钩子未按当前版本安装，先执行 install')
-    raw = rd(h, st['cave'] + OFF_FLAG, 8)
-    on, fac = struct.unpack('<II', raw)
+    on, fac = comp_state(h, st)
     print('伤害补偿：%s   倍率 = %.2f （仅对"受击方=P2"即玩家打出的伤害生效）'
-          % ('开' if on else '关', fac / 256.0))
+          % ('开' if on else '关', fac))
 
 
 def status(h):

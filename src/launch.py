@@ -9,6 +9,12 @@
     launch.py --steam            用 steam:// 协议启动（走 Steam 客户端，最稳）
     launch.py --timeout 120      等待引擎解密的最长秒数（默认 90）
     launch.py --new              已有游戏在跑时，仍然再启动一个
+    launch.py --stdin            强制开启窗口命令（输入被重定向时也能用）
+
+启动后留在窗口里可以直接敲命令（不必另开命令行）：
+    2.5          设为 2.5 倍伤害并开启       off      关闭伤害补偿
+    on [数字]    开启补偿 / 改倍率           power    立刻补满 1P 气槽
+    status       查看补丁、倍率、气槽         quit     停止补气并退出
 
 为什么不能"启动完立刻改"：
     本作 .text 在磁盘上是加密的（熵 7.9999），游戏进程起来后由加载器解密到
@@ -23,15 +29,18 @@
 """
 import ctypes
 import ctypes.wintypes as w
+import io
 import os
 import re
 import subprocess
 import sys
 import time
+from contextlib import redirect_stdout
 
 import kofp
 import power
 import profile as cfg
+import shell
 
 EXE_NAME = cfg.PROCESS_NAME
 POLL = 0.25                 # 就绪轮询间隔（秒）
@@ -310,32 +319,132 @@ def post_check(h, delay=1.0):
         return False
 
 
-def keep_full(pid, h):
-    """盯到游戏退出为止：气槽一掉就补满"""
-    print('开始维持 1P 气槽（%d 格）。关掉这个窗口不影响补丁，只是不再自动补满。'
-          % power.MAX_LEVEL)
-    print('游戏退出后自动结束，或按 Ctrl+C 提前停。')
+def keep_full(pid, h, opt=None):
+    """盯到游戏退出为止：气槽一掉就补满；同时接受窗口里敲的命令"""
+    opt = opt or {}
+    reader = None
+    if opt.get('stdin') or sys.stdin.isatty():
+        reader = shell.Reader()
+        reader.start()
+    ui = shell.Prompt() if (reader and sys.stdout.isatty()) else shell.Plain()
+
+    ui.say('开始维持 1P 气槽（%d 格）。' % power.MAX_LEVEL)
+    if reader:
+        ui.say('本窗口可直接改倍率：输入 2.5 回车 = 2.5 倍；help 看全部命令，quit 退出。')
+    else:
+        ui.say('关掉这个窗口不影响补丁，只是不再自动补满。')
     topped = False
     try:
         while is_alive(pid):
             try:
                 if refill(h) and not topped:
                     topped = True
-                    print('  已补满 1P 气槽')
+                    ui.say('  已补满 1P 气槽')
             except SystemExit:
                 pass                    # 对局切换瞬间读不到，忽略
-            time.sleep(0.5)
+            if reader is not None:
+                line = reader.poll()
+                while line is not None:
+                    act, val = shell.parse(line)
+                    if not handle(h, act, val, ui):
+                        ui.say('已退出（补丁仍然有效，只是不再自动补气）。')
+                        return
+                    line = reader.poll()
+            time.sleep(0.4)
     except KeyboardInterrupt:
+        ui.clear()
         print('\n已停止维持（补丁仍然有效）。')
         return
+    ui.clear()
     print('游戏进程已退出。')
+
+
+# ---------------------------------------------------------------- 窗口内命令
+def hook_installed(h):
+    import hookdmg
+    try:
+        st = hookdmg.find_cave(h)
+    except SystemExit:
+        return False
+    return bool(st) and not isinstance(st, str)
+
+
+def capture(fn, *a):
+    """把函数里的 print 收成行列表，便于用统一提示符输出"""
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        fn(*a)
+    return [l for l in buf.getvalue().splitlines() if l.strip()]
+
+
+def status_lines(h):
+    out = []
+    st = 'cold'
+    try:
+        st = probe(h)
+    except SystemExit:
+        st = 'cold'
+    out.append('补丁：%s' % {'patched': '已安装', 'ready': '未安装',
+                             'cold': '读不到（对局切换中？）'}.get(st, st))
+    try:
+        lvl = kofp.read_mem(h, cfg.PLAYER_OBJ + cfg.POWER_OFFSET, 1)[0]
+        out.append('1P 气槽：%d / %d' % (lvl, power.MAX_LEVEL))
+    except SystemExit:
+        out.append('1P 气槽：读不到')
+    import hookdmg
+    on, fac = hookdmg.comp_state(h)
+    if fac is None:
+        out.append('伤害倍率：钩子未装 —— 输入 2 即装上并开 2 倍')
+    else:
+        out.append('伤害倍率：%s   %g 倍' % ('开' if on else '关', fac))
+    return out
+
+
+def handle(h, act, val, ui):
+    """执行一条窗口命令；返回 False 表示用户要退出"""
+    import hookdmg
+
+    if act == 'quit':
+        return False
+    if act == 'help':
+        ui.say(*shell.HELP)
+        return True
+    if act == 'status':
+        ui.say(*status_lines(h))
+        return True
+    if act == 'power':
+        addr = cfg.PLAYER_OBJ + cfg.POWER_OFFSET
+        kofp.write_mem(h, addr, bytes([power.MAX_LEVEL]))
+        ui.say('1P 气槽已补满（%d 格）' % power.MAX_LEVEL)
+        return True
+    if act == 'off':
+        if not hook_installed(h):
+            ui.say('钩子还没装，没有可关的补偿。输入 2 就会装上并开 2 倍。')
+            return True
+        ui.say(*capture(hookdmg.set_comp, h, False))
+        return True
+
+    # act == 'on'
+    try:
+        if not hook_installed(h):
+            ui.say('伤害钩子还没装，先装上（几十毫秒）…')
+            hookdmg.install(h)
+        _, cur = hookdmg.comp_state(h)
+        f = shell.clamp(val if val is not None
+                        else (cur if cur else cfg.DEFAULT_FACTOR))
+        ui.say(*capture(hookdmg.set_comp, h, True, f))
+        if f >= 4.0:
+            ui.say('  提示：%g 倍已属一击必杀级别，嫌太狠就输入 2 调回来。' % f)
+    except SystemExit as e:
+        ui.say('[!] %s' % e)
+    return True
 
 
 # ---------------------------------------------------------------- 参数
 def parse_args(argv):
     opt = {'exe': None, 'no_power': False, 'no_keep': False, 'dmg': None,
            'timeout': LAUNCH_WAIT, 'new': False, 'steam': False,
-           'help': False}
+           'stdin': False, 'help': False}
     args = list(argv[1:])
     if args and args[0].lower() in ('launch', 'run', 'start'):
         args.pop(0)
@@ -368,6 +477,8 @@ def parse_args(argv):
             opt['new'] = True
         elif a == '--steam':
             opt['steam'] = True
+        elif a == '--stdin':
+            opt['stdin'] = True
         i += 1
     return opt
 
@@ -447,9 +558,10 @@ def main():
     else:
         print('全部完成，直接进游戏即可。')
     if opt['no_keep']:
-        print('（--no-keep：不自动补气，第一格需要自己打出来）')
+        print('（--no-keep：不自动补气，也没有窗口命令；'
+              '想边玩边改倍率就去掉这个参数）')
         return
-    keep_full(pid, h)
+    keep_full(pid, h, opt)
 
 
 if __name__ == '__main__':

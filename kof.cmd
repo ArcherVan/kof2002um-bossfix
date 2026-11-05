@@ -105,6 +105,8 @@ echo     kof.cmd power show          查看双方气槽
 echo     kof.cmd power patch         免扣气补丁：装一次整局有效
 echo     kof.cmd power unpatch       还原补丁
 echo     kof.cmd power on 5          临时补满（每回合需重跑）
+echo.
+echo   启动后的窗口里可直接输命令：2.5 = 2.5 倍  off = 关闭  help = 全部
 echo   ------------------------------------------------------------
 echo   首次使用请先运行： kof.cmd doctor
 echo.
