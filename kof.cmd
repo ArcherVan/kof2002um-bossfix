@@ -16,6 +16,7 @@ rem      kof.cmd uninstall           卸载并还原
 rem      kof.cmd rec 300             录制伤害到日志 300 秒
 rem      kof.cmd launch             启动游戏并自动打补丁
 rem      kof.cmd shortcut           在游戏目录生成双击启动文件
+rem      kof.cmd max2 patch         MAX2 解除体力 30% 限制
 rem      kof.cmd help                显示本帮助
 rem ============================================================
 setlocal EnableDelayedExpansion
@@ -55,6 +56,12 @@ if /i "%~1"=="power" (
     rem 气槽：show / set <格数> [p1|p2] / on [格数] [p1|p2] / off
     rem       patch 免扣气补丁（一次有效） / unpatch 还原
     %PY% "%ROOT%\src\power.py" %2 %3 %4
+    exit /b %errorlevel%
+)
+
+if /i "%~1"=="max2" (
+    rem MAX2 超必杀：patch 解除体力 30% 限制 / unpatch 还原 / show 查看
+    %PY% "%ROOT%\src\max2.py" %2 %3
     exit /b %errorlevel%
 )
 
@@ -101,6 +108,7 @@ echo     kof.cmd rec 300             录制伤害到 hookdmg_log.txt
 echo     kof.cmd launch             启动游戏并自动打补丁（常用）
 echo     kof.cmd launch --dmg 2    启动 + 补丁 + 2 倍伤害补偿
 echo     kof.cmd shortcut           在游戏目录生成双击启动文件
+echo     kof.cmd max2 patch         MAX2 解除体力 30%% 限制
 echo     kof.cmd power show          查看双方气槽
 echo     kof.cmd power patch         免扣气补丁：装一次整局有效
 echo     kof.cmd power unpatch       还原补丁

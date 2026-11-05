@@ -307,6 +307,42 @@ class TestShell(unittest.TestCase):
         self.assertEqual(buf.getvalue(), 'x\ny\n')
 
 
+class TestMax2Patch(unittest.TestCase):
+    """MAX2 体力限制补丁（src/max2.py）"""
+
+    def setUp(self):
+        import max2
+        self.m = max2
+
+    def test_patch_is_two_bytes(self):
+        self.assertEqual(len(self.m.ORIG), 2)
+        self.assertEqual(len(self.m.PATCH), 2)
+
+    def test_jle_to_jmp(self):
+        # 0x7E = jle rel8，0xEB = jmp rel8
+        self.assertEqual(self.m.ORIG[0], 0x7E)
+        self.assertEqual(self.m.PATCH[0], 0xEB)
+        # 相对偏移必须相同，否则会跳到别处
+        self.assertEqual(self.m.ORIG[1], self.m.PATCH[1])
+
+    def test_site_comes_from_config(self):
+        self.assertEqual(self.m.SITE, cfg.P['max2_site'])
+        self.assertGreater(self.m.SITE, 0x401000)
+
+    def test_known_constants(self):
+        # 36 / 120 = 30%，与游戏里的 sub eax, 0x24 对应
+        self.assertEqual(self.m.HP_LIMIT, 0x24)
+        self.assertEqual(self.m.POWER_NEED, 3)
+
+    def test_reads_back_what_it_writes(self):
+        mem = bytearray(self.m.ORIG)
+        self.assertEqual(bytes(mem), self.m.ORIG)
+        mem[:] = self.m.PATCH
+        self.assertEqual(bytes(mem), self.m.PATCH)
+        mem[:] = self.m.ORIG
+        self.assertEqual(bytes(mem), self.m.ORIG)
+
+
 class TestNoHardcodedPaths(unittest.TestCase):
 
     def test_sources_have_no_abs_paths(self):

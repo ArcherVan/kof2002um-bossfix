@@ -57,6 +57,8 @@ DEFAULTS = {
     'power_offset': 0x1E3,
     # 角色对象内"免耗气"标志位（字节，1 = 扣气被跳过）
     'power_flag_offset': 0x1EE,
+    # MAX2 超必杀的体力判定指令（解除 30% 血量限制用，见 src/max2.py）
+    'max2_site': 0x641D03,
     # 首次安装后的默认倍率（1.0 = 不放大）
     'default_factor': 2.0,
     # 运行日志文件名（相对仓库根目录）
@@ -75,7 +77,7 @@ def _repo_root():
 def _coerce(key, value):
     """把 JSON 里的字符串/数字统一成内部需要的类型"""
     if key in ('hook_site', 'hook_back', 'obj_slot', 'player_obj',
-               'enemy_obj', 'hp_offset'):
+               'enemy_obj', 'hp_offset', 'max2_site'):
         if isinstance(value, str):
             return int(value, 0)
         return int(value)
@@ -132,6 +134,7 @@ ENEMY_OBJ = P['enemy_obj']
 HP_OFFSET = P['hp_offset']
 POWER_OFFSET = P['power_offset']
 POWER_FLAG_OFFSET = P['power_flag_offset']
+MAX2_SITE = P['max2_site']
 DEFAULT_FACTOR = P['default_factor']
 LOG_PATH = os.path.join(_repo_root(), P['log_file'])
 CONFIG_SOURCE = P['_source']

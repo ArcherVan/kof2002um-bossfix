@@ -10,6 +10,7 @@
     launch.py --timeout 120      等待引擎解密的最长秒数（默认 90）
     launch.py --new              已有游戏在跑时，仍然再启动一个
     launch.py --stdin            强制开启窗口命令（输入被重定向时也能用）
+    launch.py --no-max2          不解除 MAX2 的"体力 30% 以下"限制
 
 启动后留在窗口里可以直接敲命令（不必另开命令行）：
     2.5          设为 2.5 倍伤害并开启       off      关闭伤害补偿
@@ -397,6 +398,13 @@ def status_lines(h):
         out.append('伤害倍率：钩子未装 —— 输入 2 即装上并开 2 倍')
     else:
         out.append('伤害倍率：%s   %g 倍' % ('开' if on else '关', fac))
+    try:
+        import max2
+        st2 = max2.state(h)
+        out.append('MAX2   ：%s' % {'orig': '原版（需体力 30% 以下）',
+                                    'patched': '已解除（气够就能发）'}.get(st2, '未知'))
+    except SystemExit:
+        out.append('MAX2   ：读不到')
     return out
 
 
@@ -448,7 +456,7 @@ def handle(h, act, val, ui):
 def parse_args(argv):
     opt = {'exe': None, 'no_power': False, 'no_keep': False, 'dmg': None,
            'timeout': LAUNCH_WAIT, 'new': False, 'steam': False,
-           'stdin': False, 'help': False}
+           'stdin': False, 'no_max2': False, 'help': False}
     args = list(argv[1:])
     if args and args[0].lower() in ('launch', 'run', 'start'):
         args.pop(0)
@@ -483,6 +491,8 @@ def parse_args(argv):
             opt['steam'] = True
         elif a == '--stdin':
             opt['stdin'] = True
+        elif a == '--no-max2':
+            opt['no_max2'] = True
         i += 1
     return opt
 
@@ -550,6 +560,15 @@ def main():
         power.install(h)
         if not post_check(h):
             raise SystemExit('补丁写入后被覆盖，请把上面的输出发我（可能版本不一致）')
+
+    if not opt['no_max2']:
+        try:
+            import max2
+            max2.install(h)
+        except SystemExit as e:
+            print('[warn] MAX2 体力限制未解除：%s' % e)
+            print('       （免扣气补丁不受影响，可正常游玩）')
+
     if opt['dmg'] is not None:
         import hookdmg
         print('')
