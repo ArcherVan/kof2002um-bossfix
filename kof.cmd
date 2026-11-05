@@ -49,6 +49,13 @@ if /i "%~1"=="doctor" (
     exit /b %errorlevel%
 )
 
+if /i "%~1"=="power" (
+    rem 气槽：show / set <格数> [p1|p2] / on [格数] [p1|p2] / off
+    rem       patch 免扣气补丁（一次有效） / unpatch 还原
+    %PY% "%ROOT%\src\power.py" %2 %3 %4
+    exit /b %errorlevel%
+)
+
 if /i "%~1"=="rec" (
     if "%~2"=="" (
         %PY% "%ROOT%\src\rec.py"
@@ -77,6 +84,10 @@ echo     kof.cmd watch 120           实时打印伤害，120 秒
 echo     kof.cmd dump                打印已记录的伤害
 echo     kof.cmd uninstall           卸载并逐字节还原
 echo     kof.cmd rec 300             录制伤害到 hookdmg_log.txt
+echo     kof.cmd power show          查看双方气槽
+echo     kof.cmd power patch         免扣气补丁：装一次整局有效
+echo     kof.cmd power unpatch       还原补丁
+echo     kof.cmd power on 5          临时补满（每回合需重跑）
 echo   ------------------------------------------------------------
 echo   首次使用请先运行： kof.cmd doctor
 echo.

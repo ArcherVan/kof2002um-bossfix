@@ -8,6 +8,8 @@
   "player_obj": "0x167D360",
   "enemy_obj": "0x167D580",
   "hp_offset": "0x138",
+  "power_offset": "0x1E3",
+  "power_flag_offset": "0x1EE",
   "default_factor": 2.0,
   "log_file": "hookdmg_log.txt"
 }

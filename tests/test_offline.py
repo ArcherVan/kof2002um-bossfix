@@ -81,6 +81,53 @@ class TestConsoleEncoding(unittest.TestCase):
         self.assertIn('中文输出测试'.encode('utf-8'), buf.getvalue())
 
 
+class TestPowerPatch(unittest.TestCase):
+    """气槽免扣补丁的机器码拼装（不接触进程）"""
+
+    def setUp(self):
+        import power as P
+        self.P = P
+
+    def test_dec_opcode(self):
+        self.assertEqual(self.P.DEC.hex(), 'fe88e3010000')
+        self.assertEqual(len(self.P.DEC), 6)
+
+    def test_spend_sites(self):
+        sites = [s for s, _ in self.P.SPEND_SITES]
+        self.assertEqual(sites, [0x430D60, 0x430DA3, 0x60AC51])
+
+    def test_cave_layout(self):
+        p1 = 0x167D360
+        b = self.P.cave_bytes(p1)
+        self.assertEqual(len(b), 14)
+        # cmp eax, imm32
+        self.assertEqual(b[0], 0x3D)
+        self.assertEqual(struct.unpack('<I', b[1:5])[0], p1)
+        # je rel8：下一条在偏移 7，目标应为偏移 13 的 ret
+        self.assertEqual(b[5], 0x74)
+        target = 7 + struct.unpack('b', b[6:7])[0]
+        self.assertEqual(target, 13)
+        # dec 紧跟在 je 之后
+        self.assertEqual(b[7:13], self.P.DEC)
+        # 末尾 ret
+        self.assertEqual(b[13], 0xC3)
+
+    def test_hook_points_into_cave(self):
+        for site, _ in self.P.SPEND_SITES:
+            cave = 0x10000000
+            b = self.P.hook_bytes(site, cave)
+            self.assertEqual(len(b), 6)
+            self.assertEqual(b[0], 0xE8)
+            self.assertEqual(b[5], 0x90)
+            # call 的下一条是 site+5，相对偏移应指向 cave
+            self.assertEqual(site + 5 + struct.unpack('<i', b[1:5])[0], cave)
+
+    def test_cave_signature(self):
+        p1 = 0x167D360
+        self.assertTrue(self.P._looks_like_cave(self.P.cave_bytes(p1)))
+        self.assertFalse(self.P._looks_like_cave(self.P.DEC + b'\x00' * 10))
+
+
 class TestNoHardcodedPaths(unittest.TestCase):
 
     def test_sources_have_no_abs_paths(self):

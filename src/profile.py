@@ -49,6 +49,10 @@ DEFAULTS = {
     'enemy_obj': 0x167D580,
     # 角色对象内 HP 字段偏移
     'hp_offset': 0x138,
+    # 角色对象内气槽格数（字节，0~5）
+    'power_offset': 0x1E3,
+    # 角色对象内"免耗气"标志位（字节，1 = 扣气被跳过）
+    'power_flag_offset': 0x1EE,
     # 首次安装后的默认倍率（1.0 = 不放大）
     'default_factor': 2.0,
     # 运行日志文件名（相对仓库根目录）
@@ -122,6 +126,8 @@ OBJ_SLOT = P['obj_slot']
 PLAYER_OBJ = P['player_obj']
 ENEMY_OBJ = P['enemy_obj']
 HP_OFFSET = P['hp_offset']
+POWER_OFFSET = P['power_offset']
+POWER_FLAG_OFFSET = P['power_flag_offset']
 DEFAULT_FACTOR = P['default_factor']
 LOG_PATH = os.path.join(_repo_root(), P['log_file'])
 CONFIG_SOURCE = P['_source']

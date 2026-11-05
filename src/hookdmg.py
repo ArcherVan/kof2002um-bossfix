@@ -379,11 +379,12 @@ def print_config():
     print('配置来源：%s' % cfg.CONFIG_SOURCE)
     for k in ('process_name', 'hook_site', 'hook_orig', 'hook_back',
               'player_obj', 'enemy_obj', 'hp_offset',
+              'power_offset', 'power_flag_offset',
               'default_factor', 'log_file'):
         v = cfg.P.get(k)
         if isinstance(v, int) and k != 'default_factor':
             v = '0x%08X' % v
-        print('  %-14s %s' % (k, v))
+        print('  %-18s %s' % (k, v))
 
 
 def main():
