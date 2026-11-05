@@ -128,6 +128,87 @@ class TestPowerPatch(unittest.TestCase):
         self.assertFalse(self.P._looks_like_cave(self.P.DEC + b'\x00' * 10))
 
 
+class TestLaunch(unittest.TestCase):
+    """一键启动：参数解析、Steam 库解析、就绪判定（不启动进程）"""
+
+    def setUp(self):
+        import power as P
+        import launch as L
+        self.P, self.L = P, L
+
+    def test_args_default(self):
+        o = self.L.parse_args(['launch.py'])
+        self.assertIsNone(o['exe'])
+        self.assertFalse(o['no_power'])
+        self.assertEqual(o['dmg'], None)
+        self.assertEqual(o['timeout'], self.L.LAUNCH_WAIT)
+
+    def test_args_strip_launch_word(self):
+        o = self.L.parse_args(['launch.py', 'launch', '--dmg', '2.5'])
+        self.assertEqual(o['dmg'], 2.5)
+
+    def test_args_dmg_without_value_uses_default(self):
+        o = self.L.parse_args(['launch.py', '--dmg', '--no-keep'])
+        self.assertEqual(o['dmg'], cfg.DEFAULT_FACTOR)
+        self.assertTrue(o['no_keep'])
+
+    def test_args_exe_and_timeout(self):
+        o = self.L.parse_args(['launch.py', '--exe', r'D:\Games\KOF\k.exe',
+                               '--timeout', '30'])
+        self.assertEqual(o['exe'], r'D:\Games\KOF\k.exe')
+        self.assertEqual(o['timeout'], 30.0)
+
+    def test_assess_cold_on_ciphertext(self):
+        site = b'\x37\x9a\xff\x01\x02\x03\x04'
+        spends = [b'\x11\x22\x33\x44\x55\x66'] * 3
+        self.assertEqual(self.L.assess(site, spends), 'cold')
+
+    def test_assess_ready(self):
+        site = cfg.HOOK_ORIG
+        spends = [self.P.DEC] * 3
+        self.assertEqual(self.L.assess(site, spends), 'ready')
+
+    def test_assess_patched(self):
+        site = b'\xe9' + b'\x00' * 6
+        spends = [b'\xe8' + b'\x00' * 5] * 3
+        self.assertEqual(self.L.assess(site, spends), 'patched')
+
+    def test_assess_mixed_is_cold(self):
+        # 一半解密完一半没有 → 还不能动
+        site = cfg.HOOK_ORIG
+        spends = [self.P.DEC, self.P.DEC, b'\x00' * 6]
+        self.assertEqual(self.L.assess(site, spends), 'cold')
+
+    def test_parse_vdf_new_format(self):
+        text = ('"libraryfolders"\n{\n "0"\n {\n  "path"  "C:\\\\Steam"\n'
+                '  "apps"\n  {\n   "2280"  "123"\n  }\n }\n'
+                ' "1"\n {\n  "path"  "D:\\\\SteamLibrary"\n }\n}\n')
+        got = self.L.parse_library_vdf(text)
+        self.assertIn('C:\\Steam', got)
+        self.assertIn('D:\\SteamLibrary', got)
+
+    def test_parse_vdf_old_format(self):
+        text = '"libraryfolders"\n{\n "TimeNextStatsReport"  "1"\n "1"  "E:\\\\Lib"\n}\n'
+        got = self.L.parse_library_vdf(text)
+        self.assertIn('E:\\Lib', got)
+        self.assertNotIn('1', got)          # 不要把统计字段当成路径
+
+    def test_scan_finds_nested_exe(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            deep = os.path.join(tmp, 'common', 'KOF 2002 UM')
+            os.makedirs(deep)
+            exe = os.path.join(deep, 'KingOfFighters2002UM.exe')
+            open(exe, 'wb').close()
+            self.assertEqual(self.L.scan_exe(os.path.join(tmp, 'common')),
+                             exe)
+            self.assertIsNone(self.L.scan_exe(tmp, 'nope.exe'))
+
+    def test_explicit_exe_must_exist(self):
+        with self.assertRaises(SystemExit):
+            self.L.find_exe(os.path.join(ROOT, 'no-such-game.exe'))
+
+
 class TestNoHardcodedPaths(unittest.TestCase):
 
     def test_sources_have_no_abs_paths(self):

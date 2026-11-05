@@ -31,13 +31,9 @@ jobs:
       - name: 语法检查
         shell: pwsh
         run: |
-          $files = @(
-            'src/hookdmg.py', 'src/kofp.py', 'src/rec.py',
-            'src/profile.py', 'tools/env_check.py',
-            'tests/test_offline.py'
-          )
+          $files = Get-ChildItem -Path src, tools, tests -Filter *.py -Recurse
           foreach ($f in $files) {
-            python -m py_compile $f
+            python -m py_compile $f.FullName
             if ($LASTEXITCODE -ne 0) { exit 1 }
           }
 
@@ -46,6 +42,9 @@ jobs:
 
       - name: 配置加载
         run: python src/hookdmg.py config
+
+      - name: 启动器可导入且能打印帮助
+        run: python src/launch.py --help
 
       - name: 校验 config.example.json 可解析
         run: python -c "import json; json.load(open('config.example.json', encoding='utf-8')); print('json ok')"

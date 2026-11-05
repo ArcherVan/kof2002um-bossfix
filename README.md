@@ -66,6 +66,7 @@
 
 | 功能 | 命令 | 说明 |
 |---|---|---|
+| **一键启动** | `kof.cmd launch` | **启动游戏 + 自动等解密 + 打补丁 + 持续补满气槽**，一条命令搞定 |
 | 加载补偿 | `kof.cmd install` | 安装钩子，可重复执行，自带失效检测与自愈 |
 | 开启并设定倍率 | `kof.cmd on 2` | 支持一位小数，实时生效，无需重开对局 |
 | 关闭 | `kof.cmd off` | 伤害立刻回到原值，钩子仍保留 |
@@ -233,6 +234,7 @@ kof2002um-bossfix/
 ├─ CHANGELOG.md
 ├─ CONTRIBUTING.md
 ├─ src/
+│  ├─ launch.py               一键启动：拉起游戏 + 等解密 + 自动打补丁
 │  ├─ hookdmg.py              主工具：钩子安装 / 开关 / 状态 / 录制
 │  ├─ kofp.py                 进程与内存读写底层
 │  ├─ power.py                气槽控制：查看 / 改写 / 免扣气补丁
@@ -293,7 +295,15 @@ kof2002um-bossfix/
 
    再按 [配置说明](#配置说明) 修改。不确定要不要改，就先跳过——`doctor` 会告诉你字节对不对。
 
-4. **启动游戏，然后加载**
+4. **启动并加载**
+
+   最省事的一条（启动游戏 + 免扣气补丁 + 2 倍伤害补偿）：
+
+   ```bat
+   kof.cmd launch --dmg 2
+   ```
+
+   也可以自己开游戏后再挂：
 
    ```bat
    kof.cmd install
@@ -306,9 +316,35 @@ kof2002um-bossfix/
 
 ## 使用
 
-### 日常三步
+### 一键启动（推荐）
 
-每次开游戏都要做一次，全程约 5 秒：
+不想记两条命令，直接：
+
+```bat
+kof.cmd launch
+```
+
+它一次做完：定位游戏 exe → 启动 → 等 `.text` 解密完成 → 装免扣气补丁 → 把 1P 气槽顶到 5 格 →
+留在窗口里盯着，气槽一掉就补满，直到你退出游戏。
+
+常用变体：
+
+| 命令 | 作用 |
+|---|---|
+| `kof.cmd launch` | 启动 + 免扣气补丁 + 持续补满气槽 |
+| `kof.cmd launch --dmg 2` | 再叠上伤害补偿（2.0 倍） |
+| `kof.cmd launch --no-keep` | 只打补丁，不自动补气 |
+| `kof.cmd launch --no-power` | 只启动游戏，不打补丁 |
+| `kof.cmd launch --new` | 已有游戏在跑时，仍然再开一个 |
+| `kof.cmd launch --exe "D:\...\KingOfFighters2002UM.exe"` | 手动指定游戏路径 |
+| `kof.cmd launch --steam` | 走 `steam://` 协议启动（直接起 exe 被拦时用） |
+
+游戏已经在跑时再执行同一条命令，它会认出现有进程、只补打补丁，不会开第二个。
+关掉这个控制台窗口不影响已打好的补丁，只是不再自动补气。
+
+### 手动三步
+
+不想让工具代管启动，也可以自己开游戏再挂：
 
 ```bat
 cd /d <你的仓库路径>
@@ -323,6 +359,8 @@ kof.cmd on 2
 ```bat
 kof.cmd doctor            环境自检
 kof.cmd config            查看当前生效的配置及来源
+kof.cmd launch            启动游戏并自动打补丁（推荐）
+kof.cmd launch --dmg 2    启动 + 补丁 + 2 倍伤害补偿
 kof.cmd install           加载钩子（游戏须已启动；可重复执行）
 kof.cmd on 2              开启补偿，倍率 2.00
 kof.cmd on 1.5            自定义倍率（支持一位小数）
@@ -390,6 +428,8 @@ kof.cmd off
 | 字段 | 默认值 | 含义 | 何时需要改 |
 |---|---|---|---|
 | `process_name` | `KingOfFighters2002UM.exe` | 进程名，大小写不敏感 | repack 改了 EXE 名 |
+| `game_exe` | 空 | 游戏 exe 完整路径；留空则自动扫 Steam 库和工具目录附近 | `launch` 提示找不到游戏 |
+| `steam_appid` | `222440` | Steam AppID，直接起 exe 失败时用它走 `steam://` 重试 | 换成别的版本 / 留空禁用重试 |
 | `hook_site` | `0x620902` | 伤害落地指令的运行时地址 | 版本不同、`doctor` 报字节不符 |
 | `hook_orig` | `66 29 90 38 01 00 00` | 该处原始字节（校验用） | 同上 |
 | `hook_back` | `0x620909` | 原指令之后的下一条地址 | 同上 |
@@ -397,6 +437,8 @@ kof.cmd off
 | `player_obj` | `0x167D360` | 1P 角色对象地址 | 版本不同导致补偿不生效时 |
 | `enemy_obj` | `0x167D580` | 2P 角色对象地址 | 同上 |
 | `hp_offset` | `0x138` | 角色对象内 HP 偏移 | 一般不改 |
+| `power_offset` | `0x1E3` | 角色对象内气槽格数（0~5） | 一般不改 |
+| `power_flag_offset` | `0x1EE` | 角色对象内"免耗气"标志 | 一般不改 |
 | `default_factor` | `2.0` | `on` 不带参数时的倍率 | 想固定默认倍率 |
 | `log_file` | `hookdmg_log.txt` | 录制日志文件名 | 想换位置 |
 
@@ -454,7 +496,7 @@ py -3  →  python  →  python3        （各自都要求能 import ctypes）
 
 1. **只对 1P 位置生效。** 补偿的判定是"受击方 == 2P 对象"，即你作为 1P 攻击时。你在 2P 位置不会生效。
 2. **不区分角色。** 它不知道你是不是在用 BOSS，开着就放大所有你打出的伤害。玩普通角色前必须 `off`。
-3. **每次启动游戏都要重装。** 改动只在进程内，退出即消失。想要"自动"，把 `kof.cmd install && kof.cmd on 2` 做成快捷方式放进启动项。
+3. **每次启动游戏都要重装。** 改动只在进程内，退出即消失。想让这一步自动化，用 `kof.cmd launch`（启动即打补丁），或把它的快捷方式放进启动项。
 4. **倍率是补偿而非还原。** "玩家选 BOSS 时攻击力下降"的确切倍率尚未定位，本工具是用可调倍率逼近，不是精确恢复。
 5. **不改变 CPU 侧行为。** CPU 用 BOSS 时的受击减伤保持原样。
 6. **连段衰减保持原样。** 早期版本曾误改这一段，现已移除；连段伤害仍会正常递减。
@@ -497,7 +539,21 @@ Python 环境的 `_ctypes.pyd` 与解释器版本不匹配（多见于自动更�
 
 **Q：能不能一次性永久生效？**
 
-不能，改动在内存中。把 `kof.cmd install && kof.cmd on 2` 做成启动项快捷方式，效果等同。
+不能，改动在内存中，关掉游戏就没了。但不必每次手敲命令——用 `kof.cmd launch`，一条命令完成"启动 + 打补丁"，想更省事就把它做成桌面快捷方式（工作目录设成仓库根目录）。
+
+**Q：`kof.cmd launch` 说找不到游戏？**
+
+三档兜底依次是：`config.json` 的 `game_exe` → Steam 库自动扫描（读注册表里的 Steam 路径和 `libraryfolders.vdf`）→ 工具所在目录及其上一级。都不中就手动指定一次：
+
+```bat
+kof.cmd launch --exe "D:\Games\THE KING OF FIGHTERS 2002 UM\KingOfFighters2002UM.exe"
+```
+
+或者把上面的路径写进 `config.json` 的 `game_exe`，以后直接 `kof.cmd launch`。
+
+**Q：`launch` 启动了但补丁没打上？**
+
+看它打印到哪一步：卡在"等待引擎解密"是游戏还没加载完（加大 `--timeout`）；提示"补丁写入后被覆盖"通常是版本不一致，跑 `kof.cmd doctor` 把输出发 Issues。直接起 exe 没反应的话，加 `--steam` 改走 Steam 协议。
 
 **Q：会不会被 Steam 判定为作弊？**
 

@@ -14,6 +14,7 @@ rem      kof.cmd watch 120           实时打印伤害 120 秒
 rem      kof.cmd dump                打印已记录的伤害
 rem      kof.cmd uninstall           卸载并还原
 rem      kof.cmd rec 300             录制伤害到日志 300 秒
+rem      kof.cmd launch             启动游戏并自动打补丁
 rem      kof.cmd help                显示本帮助
 rem ============================================================
 setlocal EnableDelayedExpansion
@@ -56,6 +57,12 @@ if /i "%~1"=="power" (
     exit /b %errorlevel%
 )
 
+if /i "%~1"=="launch" (
+    rem 一条命令：启动游戏 + 装免扣气补丁；加 --dmg 2 同时开伤害补偿
+    %PY% "%ROOT%\src\launch.py" %*
+    exit /b %errorlevel%
+)
+
 if /i "%~1"=="rec" (
     if "%~2"=="" (
         %PY% "%ROOT%\src\rec.py"
@@ -84,6 +91,8 @@ echo     kof.cmd watch 120           实时打印伤害，120 秒
 echo     kof.cmd dump                打印已记录的伤害
 echo     kof.cmd uninstall           卸载并逐字节还原
 echo     kof.cmd rec 300             录制伤害到 hookdmg_log.txt
+echo     kof.cmd launch             启动游戏并自动打补丁（常用）
+echo     kof.cmd launch --dmg 2    启动 + 补丁 + 2 倍伤害补偿
 echo     kof.cmd power show          查看双方气槽
 echo     kof.cmd power patch         免扣气补丁：装一次整局有效
 echo     kof.cmd power unpatch       还原补丁

@@ -35,6 +35,10 @@ _force_utf8_console()
 DEFAULTS = {
     # 进程名：大小写不敏感，按 tasklist 输出匹配
     'process_name': 'KingOfFighters2002UM.exe',
+    # 游戏 exe 的完整路径（留空 = 由 launch.py 自动从 Steam 库扫描）
+    'game_exe': '',
+    # Steam appid：直接启动失败时用它走 steam:// 协议拉起（KOF 2002 UM = 222440）
+    'steam_appid': '222440',
     # 伤害落地指令所在的运行时地址（钩子挂在这里）
     'hook_site': 0x620902,
     # 该处的原始指令字节（校验用；不一致会拒绝改动）
