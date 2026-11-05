@@ -209,6 +209,40 @@ class TestLaunch(unittest.TestCase):
             self.L.find_exe(os.path.join(ROOT, 'no-such-game.exe'))
 
 
+class TestGameLauncher(unittest.TestCase):
+    """游戏目录启动文件的生成（不写盘、不启动游戏）"""
+
+    def setUp(self):
+        sys.path.insert(0, os.path.join(ROOT, 'tools'))
+        import make_launcher as M
+        self.M = M
+
+    def test_placeholder_replaced(self):
+        text = self.M.render(r'D:\Some Repo')
+        self.assertIn('set "KOF_HOME=D:\\Some Repo"', text)
+        self.assertNotIn('{{HOME}}', text)
+
+    def test_crlf_only(self):
+        text = self.M.render('X')
+        self.assertNotIn('\n', text.replace('\r\n', ''))
+
+    def test_gbk_encodable(self):
+        self.M.render(r'D:\路径\仓库').encode('gbk')
+
+    def test_proxy_cleared(self):
+        text = self.M.render('X')
+        for var in ('HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY',
+                    'http_proxy', 'https_proxy', 'all_proxy'):
+            self.assertIn('set "%s="' % var, text)
+        self.assertIn('set "NO_PROXY=*"', text)
+
+    def test_has_patch_and_fallback(self):
+        text = self.M.render('X')
+        self.assertIn('src\\launch.py', text)     # 有仓库就打补丁
+        self.assertIn(':plain', text)             # 没有就直接开游戏
+        self.assertIn('start "" "%EXE%"', text)
+
+
 class TestNoHardcodedPaths(unittest.TestCase):
 
     def test_sources_have_no_abs_paths(self):

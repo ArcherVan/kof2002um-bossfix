@@ -235,6 +235,7 @@ def _clear_line():
 def wait_ready(h, timeout=LAUNCH_WAIT, quiet=False):
     t0 = time.time()
     tick = -1
+    drawn = False
     # 重定向到文件/管道时不要用 \r 进度条，否则日志里会留下一长串空格
     tty = not quiet and sys.stdout.isatty()
     while True:
@@ -243,18 +244,19 @@ def wait_ready(h, timeout=LAUNCH_WAIT, quiet=False):
         except SystemExit:
             state = 'cold'
         if state != 'cold':
-            if tty:
+            if drawn:
                 _clear_line()
             return state, time.time() - t0
         elapsed = time.time() - t0
         if elapsed >= timeout:
-            if tty:
+            if drawn:
                 _clear_line()
             return 'timeout', elapsed
-        if not quiet:
+        if tty:
             cur = int(elapsed * 2)
             if cur != tick:
                 tick = cur
+                drawn = True
                 sys.stdout.write('\r  等待引擎解密 … %4.1fs' % elapsed)
                 sys.stdout.flush()
         time.sleep(POLL)
